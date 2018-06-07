@@ -34,12 +34,14 @@ namespace LuaFramework {
             public Action<UObject[]> sharpFunc;
         }
 
-        // Load AssetBundleManifest.
+        // Load AssetBundleManifest, which is 'AssetBundle.manifest'
         public void Initialize(string manifestName, Action initOK) {
             m_BaseDownloadingURL = Util.GetRelativePath();
+
+            //  加载文件：AssetBundle.manifest
             LoadAsset<AssetBundleManifest>(manifestName, new string[] { "AssetBundleManifest" }, delegate(UObject[] objs) {
                 if (objs.Length > 0) {
-                    m_AssetBundleManifest = objs[0] as AssetBundleManifest;
+                    m_AssetBundleManifest = objs[0] as AssetBundleManifest; //  赋值，使 m_AssetBundleManifest 指向 AssetBundle.manifest
                     m_AllManifest = m_AssetBundleManifest.GetAllAssetBundles();
                 }
                 if (initOK != null) initOK();
@@ -94,6 +96,8 @@ namespace LuaFramework {
             request.sharpFunc = action;
 
             List<LoadAssetRequest> requests = null;
+
+            //  判断当前是否正在加载该资源包，若正在加载，则把当前的加载请求添加进请求列表中，若没有则调用OnLoadAsset()
             if (!m_LoadRequests.TryGetValue(abName, out requests)) {
                 requests = new List<LoadAssetRequest>();
                 requests.Add(request);
@@ -107,9 +111,11 @@ namespace LuaFramework {
         IEnumerator OnLoadAsset<T>(string abName) where T : UObject {
             AssetBundleInfo bundleInfo = GetLoadedAssetBundle(abName);
             if (bundleInfo == null) {
-                yield return StartCoroutine(OnLoadAssetBundle(abName, typeof(T)));
+                yield return StartCoroutine(OnLoadAssetBundle(abName, typeof(T)));  //  加载 AssetBundle
 
-                bundleInfo = GetLoadedAssetBundle(abName);
+                bundleInfo = GetLoadedAssetBundle(abName);  //  获取 AssetBundle
+
+                //  若该包不存在，则将当前加载命令从请求列表中移出
                 if (bundleInfo == null) {
                     m_LoadRequests.Remove(abName);
                     Debug.LogError("OnLoadAsset--->>>" + abName);

@@ -53,7 +53,7 @@
 + Hit Play, you'll see **A** is the log result, which is ``` HelloWorld from server ```
 
 ## Issue
-     I've had stuck in the last step on Test Hotfix that Console doesn't print neither 'HelloWold from server' nor 'HelloWorld from local', seems like some files haven't been downloaded from server. And below is my solution.
+> I've had stuck in the last step on Test Hotfix that Console doesn't print neither 'HelloWold from server' nor 'HelloWorld from local', seems like some files haven't been downloaded from server. And below is my solution.
 
 + Go to IIS
 + Select your local server website
@@ -98,7 +98,7 @@
             - 运行，查看 Console 中的输出内容
 
 ## 热更新测试
-+ 搭建IIS本地服务器, 如需帮助，可查看该[简易指南](https://github.com/ALEX-WHISPER/Intro_BuildingIISLocalServer)
++ 搭建IIS本地服务器，如需帮助，可查看该[简易指南](https://github.com/ALEX-WHISPER/Intro_BuildingIISLocalServer)
 + 修改配置
     + 打开 **AppConst.cs**
     + 将 **UpdateMode** 设置为 **true**
@@ -114,7 +114,7 @@
 + 运行, 正常情况下应在 Console 中看到**改动A**的输出结果, 即 ``` HelloWorld from server ```
 
 ## 遇到的问题
-     在热更新测试的最后一步，Console 即不打印 "HelloWorld from server" 也不打印 "HelloWorld from local"。打开服务器下文件目录，可看到存在一无后缀的文件：StreamingAssets ，该文件未能成功从服务器获取并下载至本地，造成文件缺失，无法正常执行 lua 代码。以下为本人的解决方案。
+ > 在热更新测试的最后一步，Console 即不打印 "HelloWorld from server" 也不打印 "HelloWorld from local"。打开服务器下文件目录，可看到存在一无后缀的文件：StreamingAssets ，该文件未能成功从服务器获取并下载至本地，造成文件缺失，无法正常执行 lua 代码。以下为本人的解决方案。
 
 + 进入 IIS
 + 选择先前搭建的 IIS 网站

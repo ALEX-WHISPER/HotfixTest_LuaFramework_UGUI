@@ -62,6 +62,10 @@
     + **MIME type**: ```application/octet-stream```
 + Back to Unity and play again, problem solved.
 
+## Reference
++ [Unity3D热更新LuaFramework入门实战(1)——代码热更新](https://zhuanlan.zhihu.com/p/21386682)
++ [Win7如何搭建IIS本地服务器网站](https://jingyan.baidu.com/article/2fb0ba40916a1c00f2ec5ff7.html)
+
 ---
 ## 相关链接
 + [toLua#](https://github.com/topameng/tolua)
@@ -123,3 +127,7 @@
     + **文件扩展名**: ```.*```
     + **MIME 类型**: ```application/octet-stream```
 + 回到 Unity 再次运行，问题解决
+
+## 参考资料
++ [Unity3D热更新LuaFramework入门实战(1)——代码热更新](https://zhuanlan.zhihu.com/p/21386682)
++ [Win7如何搭建IIS本地服务器网站](https://jingyan.baidu.com/article/2fb0ba40916a1c00f2ec5ff7.html)

@@ -168,7 +168,7 @@ public class Packager {
         AddBuildMap("shared_asset" + AppConst.ExtName, "*.png", "Assets/LuaFramework/Examples/Textures/Shared");
 
         //  custom packager
-        AddBuildMap("scifi-gun" + AppConst.ExtName, "*.prefab", "Assets/Resources/SciFi Gun");
+        //AddBuildMap("scifi-gun" + AppConst.ExtName, "*.prefab", "Assets/Resources/SciFi Gun");
     }
 
     /// <summary>

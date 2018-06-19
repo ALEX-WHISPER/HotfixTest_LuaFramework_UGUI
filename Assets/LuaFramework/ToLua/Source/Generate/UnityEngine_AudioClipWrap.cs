@@ -38,8 +38,10 @@ public class UnityEngine_AudioClipWrap
 
 			if (count == 0)
 			{
-				UnityEngine.AudioClip obj = new UnityEngine.AudioClip();
-				ToLua.PushSealed(L, obj);
+                //UnityEngine.AudioClip obj = new UnityEngine.AudioClip();
+                UnityEngine.AudioClip obj = null;
+
+                ToLua.PushSealed(L, obj);
 				return 1;
 			}
 			else

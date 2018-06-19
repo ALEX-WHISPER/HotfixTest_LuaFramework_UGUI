@@ -52,8 +52,10 @@ public class UnityEngine_ShaderWrap
 
 			if (count == 0)
 			{
-				UnityEngine.Shader obj = new UnityEngine.Shader();
-				ToLua.PushSealed(L, obj);
+                //UnityEngine.Shader obj = new UnityEngine.Shader();
+                UnityEngine.Shader obj = null;
+
+                ToLua.PushSealed(L, obj);
 				return 1;
 			}
 			else

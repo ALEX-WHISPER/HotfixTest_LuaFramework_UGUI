@@ -37,8 +37,10 @@ public class UnityEngine_TextureWrap
 
 			if (count == 0)
 			{
-				UnityEngine.Texture obj = new UnityEngine.Texture();
-				ToLua.Push(L, obj);
+                //UnityEngine.Texture obj = new UnityEngine.Texture();
+                UnityEngine.Texture obj = null;
+
+                ToLua.Push(L, obj);
 				return 1;
 			}
 			else

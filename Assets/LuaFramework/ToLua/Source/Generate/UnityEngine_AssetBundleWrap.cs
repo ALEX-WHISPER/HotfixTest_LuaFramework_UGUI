@@ -42,8 +42,10 @@ public class UnityEngine_AssetBundleWrap
 
 			if (count == 0)
 			{
-				UnityEngine.AssetBundle obj = new UnityEngine.AssetBundle();
-				ToLua.PushSealed(L, obj);
+                //UnityEngine.AssetBundle obj = new UnityEngine.AssetBundle();
+                UnityEngine.AssetBundle obj = null;
+
+                ToLua.PushSealed(L, obj);
 				return 1;
 			}
 			else

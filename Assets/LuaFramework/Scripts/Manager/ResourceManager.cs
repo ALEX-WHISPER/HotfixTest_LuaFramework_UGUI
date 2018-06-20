@@ -22,10 +22,10 @@ namespace LuaFramework {
     public class ResourceManager : Manager {
         string m_BaseDownloadingURL = "";
         string[] m_AllManifest = null;
-        AssetBundleManifest m_AssetBundleManifest = null;
-        Dictionary<string, string[]> m_Dependencies = new Dictionary<string, string[]>();
-        Dictionary<string, AssetBundleInfo> m_LoadedAssetBundles = new Dictionary<string, AssetBundleInfo>();
-        Dictionary<string, List<LoadAssetRequest>> m_LoadRequests = new Dictionary<string, List<LoadAssetRequest>>();
+        AssetBundleManifest m_AssetBundleManifest = null;   //  所有包的依赖关系
+        Dictionary<string, string[]> m_Dependencies = new Dictionary<string, string[]>();   //  各资源包所依赖的其它资源包
+        Dictionary<string, AssetBundleInfo> m_LoadedAssetBundles = new Dictionary<string, AssetBundleInfo>();   //  已加载的资源包
+        Dictionary<string, List<LoadAssetRequest>> m_LoadRequests = new Dictionary<string, List<LoadAssetRequest>>();   //  对某资源包内的某资源文件的加载请求
 
         class LoadAssetRequest {
             public Type assetType;
@@ -48,6 +48,7 @@ namespace LuaFramework {
             });
         }
 
+        //  加载 ab 中的某 asset
         public void LoadPrefab(string abName, string assetName, Action<UObject[]> func) {
             LoadAsset<GameObject>(abName, new string[] { assetName }, func);
         }
@@ -89,40 +90,49 @@ namespace LuaFramework {
         void LoadAsset<T>(string abName, string[] assetNames, Action<UObject[]> action = null, LuaFunction func = null) where T : UObject {
             abName = GetRealAssetPath(abName);
 
+            //  定义一个加载请求
             LoadAssetRequest request = new LoadAssetRequest();
             request.assetType = typeof(T);
-            request.assetNames = assetNames;
+            request.assetNames = assetNames;    //  请求加载的资源文件名
             request.luaFunc = func;
             request.sharpFunc = action;
 
-            List<LoadAssetRequest> requests = null;
+            List<LoadAssetRequest> requests = null; //  每次资源加载请求都将请求列表重置
 
-            //  判断当前是否正在加载该资源包，若正在加载，则把当前的加载请求添加进请求列表中，若没有则调用OnLoadAsset()
+            //  判断当前是否正在加载该资源包，若没有则调用 OnLoadAsset()
             if (!m_LoadRequests.TryGetValue(abName, out requests)) {
                 requests = new List<LoadAssetRequest>();
                 requests.Add(request);
-                m_LoadRequests.Add(abName, requests);
-                StartCoroutine(OnLoadAsset<T>(abName));
-            } else {
+                m_LoadRequests.Add(abName, requests);   //  资源加载请求字典：key:资源包名, value:加载请求
+                StartCoroutine(OnLoadAsset<T>(abName)); //  加载指定的资源包
+            }
+
+            //  若正在加载，则把当前的加载请求添加进请求列表中
+            else {
                 requests.Add(request);
             }
         }
 
         IEnumerator OnLoadAsset<T>(string abName) where T : UObject {
+
+            //  获取 AssetBundle，若为空，可能是 ab 不存在，也可能由于尚未加载，因此须先进行加载，再判断 ab 是否的确不存在
             AssetBundleInfo bundleInfo = GetLoadedAssetBundle(abName);
+
             if (bundleInfo == null) {
                 yield return StartCoroutine(OnLoadAssetBundle(abName, typeof(T)));  //  加载 AssetBundle
-
                 bundleInfo = GetLoadedAssetBundle(abName);  //  获取 AssetBundle
 
-                //  若该包不存在，则将当前加载命令从请求列表中移出
+                //  若该资源包的确不存在，则将当前加载命令从请求记录字典中移出，并退出协程
                 if (bundleInfo == null) {
                     m_LoadRequests.Remove(abName);
                     Debug.LogError("OnLoadAsset--->>>" + abName);
                     yield break;
                 }
             }
+
             List<LoadAssetRequest> list = null;
+
+            //  如果获取不到对该 ab 的加载请求
             if (!m_LoadRequests.TryGetValue(abName, out list)) {
                 m_LoadRequests.Remove(abName);
                 yield break;
@@ -162,9 +172,13 @@ namespace LuaFramework {
             if (type == typeof(AssetBundleManifest))
                 download = new WWW(url);
             else {
-                string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);
+                string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);   //  获取指定包所依赖的所有包名
+
+                //  如果该包存在对其他包的依赖，则先加载其依赖包
                 if (dependencies.Length > 0) {
-                    m_Dependencies.Add(abName, dependencies);
+                    //  记录当前ab的依赖状态
+                    m_Dependencies.Add(abName, dependencies);   //  key: assetBundle名，value: 该assetBundle所依赖的包名数组
+
                     for (int i = 0; i < dependencies.Length; i++) {
                         string depName = dependencies[i];
                         AssetBundleInfo bundleInfo = null;

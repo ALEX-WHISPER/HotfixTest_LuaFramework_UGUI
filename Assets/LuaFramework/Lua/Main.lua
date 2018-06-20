@@ -3,11 +3,13 @@ function Main()
 	--print("logic start")
 	--LuaFramework.Util.Log("HelloWorld from local~")
 
-	local go = UnityEngine.GameObject('go')
-	go.transform.position = Vector3.one
+	local go = UnityEngine.GameObject('go');
+	go.transform.position = Vector3.one;
 
 	--LuaHelper = LuaFramework.LuaHelper;
 	--resMgr = LuaHelper.GetResManager();
+
+	--(void)LoadPrefab(string abName, string assetName, Action<UObject[]> func)
 	--resMgr:LoadPrefab('scifi-gun', { 'SciFiGun_Diffuse' }, OnLoadFinish);
 
 end

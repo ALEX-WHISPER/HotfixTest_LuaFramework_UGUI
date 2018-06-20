@@ -113,8 +113,8 @@ namespace LuaFramework {
             }
         }
 
+        //  加载 Asset
         IEnumerator OnLoadAsset<T>(string abName) where T : UObject {
-
             //  获取 AssetBundle，若为空，可能是 ab 不存在，也可能由于尚未加载，因此须先进行加载，再判断 ab 是否的确不存在
             AssetBundleInfo bundleInfo = GetLoadedAssetBundle(abName);
 
@@ -165,6 +165,7 @@ namespace LuaFramework {
             m_LoadRequests.Remove(abName);
         }
 
+        //  加载 AssetBundle
         IEnumerator OnLoadAssetBundle(string abName, Type type) {
             string url = m_BaseDownloadingURL + abName;
 
@@ -172,13 +173,14 @@ namespace LuaFramework {
             if (type == typeof(AssetBundleManifest))
                 download = new WWW(url);
             else {
-                string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);   //  获取指定包所依赖的所有包名
+                string[] dependencies = m_AssetBundleManifest.GetAllDependencies(abName);   //  获取依赖包
 
                 //  如果该包存在对其他包的依赖，则先加载其依赖包
                 if (dependencies.Length > 0) {
-                    //  记录当前ab的依赖状态
-                    m_Dependencies.Add(abName, dependencies);   //  key: assetBundle名，value: 该assetBundle所依赖的包名数组
+                    //  更新依赖表
+                    m_Dependencies.Add(abName, dependencies);   //  key: assetBundle名，value: 该 assetBundle 所依赖的包名数组
 
+                    //  加载依赖包
                     for (int i = 0; i < dependencies.Length; i++) {
                         string depName = dependencies[i];
                         AssetBundleInfo bundleInfo = null;
@@ -189,12 +191,14 @@ namespace LuaFramework {
                         }
                     }
                 }
+                //  然后加载主体资源
                 download = WWW.LoadFromCacheOrDownload(url, m_AssetBundleManifest.GetAssetBundleHash(abName), 0);
             }
             yield return download;
 
             AssetBundle assetObj = download.assetBundle;
             if (assetObj != null) {
+                //  更新加载表，当前包已被加载
                 m_LoadedAssetBundles.Add(abName, new AssetBundleInfo(assetObj));
             }
         }

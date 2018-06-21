@@ -34,14 +34,14 @@ namespace LuaFramework {
             public Action<UObject[]> sharpFunc;
         }
 
-        // Load AssetBundleManifest, which is 'AssetBundle.manifest'
+        // Load AssetBundleManifest, which is 'StreamingAssets.manifest'
         public void Initialize(string manifestName, Action initOK) {
             m_BaseDownloadingURL = Util.GetRelativePath();
 
-            //  加载文件：AssetBundle.manifest
+            //  加载文件：StreamingAssets.manifest
             LoadAsset<AssetBundleManifest>(manifestName, new string[] { "AssetBundleManifest" }, delegate(UObject[] objs) {
                 if (objs.Length > 0) {
-                    m_AssetBundleManifest = objs[0] as AssetBundleManifest; //  赋值，使 m_AssetBundleManifest 指向 AssetBundle.manifest
+                    m_AssetBundleManifest = objs[0] as AssetBundleManifest; //  赋值，使 m_AssetBundleManifest 指向 StreamingAssets.manifest
                     m_AllManifest = m_AssetBundleManifest.GetAllAssetBundles();
                 }
                 if (initOK != null) initOK();
@@ -93,13 +93,13 @@ namespace LuaFramework {
             //  定义一个加载请求
             LoadAssetRequest request = new LoadAssetRequest();
             request.assetType = typeof(T);
-            request.assetNames = assetNames;    //  请求加载的资源文件名
+            request.assetNames = assetNames;    //  请求加载的资源文件名数组
             request.luaFunc = func;
             request.sharpFunc = action;
 
             List<LoadAssetRequest> requests = null; //  每次资源加载请求都将请求列表重置
 
-            //  判断当前是否正在加载该资源包，若没有则调用 OnLoadAsset()
+            //  判断当前是否正在加载该资源包，若没有则调用 OnLoadAsset()，此时 requests 已被更新，指向该ab所对应的请求列表
             if (!m_LoadRequests.TryGetValue(abName, out requests)) {
                 requests = new List<LoadAssetRequest>();
                 requests.Add(request);
@@ -107,7 +107,7 @@ namespace LuaFramework {
                 StartCoroutine(OnLoadAsset<T>(abName)); //  加载指定的资源包
             }
 
-            //  若正在加载，则把当前的加载请求添加进请求列表中
+            //  若正在加载，则把当前的加载请求添加进该资源包对应的请求列表中
             else {
                 requests.Add(request);
             }
@@ -115,7 +115,7 @@ namespace LuaFramework {
 
         //  加载 Asset
         IEnumerator OnLoadAsset<T>(string abName) where T : UObject {
-            //  获取 AssetBundle，若为空，可能是 ab 不存在，也可能由于尚未加载，因此须先进行加载，再判断 ab 是否的确不存在
+            //  从加载表中获取 AssetBundle，若为空，可能是 ab 不存在，也可能由于尚未加载，因此须先进行加载，再判断 ab 是否的确不存在
             AssetBundleInfo bundleInfo = GetLoadedAssetBundle(abName);
 
             if (bundleInfo == null) {
@@ -132,13 +132,15 @@ namespace LuaFramework {
 
             List<LoadAssetRequest> list = null;
 
-            //  如果获取不到对该 ab 的加载请求
+            //  如果获取不到对该 ab 的加载请求，将该条记录从字典中移出，然后退出协程
             if (!m_LoadRequests.TryGetValue(abName, out list)) {
                 m_LoadRequests.Remove(abName);
                 yield break;
             }
+
+            //  list: abName 所对应的请求列表
             for (int i = 0; i < list.Count; i++) {
-                string[] assetNames = list[i].assetNames;
+                string[] assetNames = list[i].assetNames;   //  每条请求对应要加载的资源文件名数组
                 List<UObject> result = new List<UObject>();
 
                 AssetBundle ab = bundleInfo.m_AssetBundle;
@@ -151,6 +153,8 @@ namespace LuaFramework {
                     //T assetObj = ab.LoadAsset<T>(assetPath);
                     //result.Add(assetObj);
                 }
+
+                //  call backs
                 if (list[i].sharpFunc != null) {
                     list[i].sharpFunc(result.ToArray());
                     list[i].sharpFunc = null;
@@ -162,6 +166,8 @@ namespace LuaFramework {
                 }
                 bundleInfo.m_ReferencedCount++;
             }
+
+            //  该 ab 所有请求处理完后，将其从请求字典中移出，表示对该资源包的加载已经结束
             m_LoadRequests.Remove(abName);
         }
 

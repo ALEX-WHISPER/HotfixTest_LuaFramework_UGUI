@@ -13,8 +13,8 @@ function Update()
 	local hInput = UnityEngine.Input.GetAxis("Horizontal")
 	local vInput = UnityEngine.Input.GetAxis("Vertical")
 
---	local destVec = go.transform.position + Vector3.New(hInput, vInput) * 0.5 * UnityEngine.Time.deltaTime
---	go.transform.position = destVec
+	local destVec = go.transform.position + Vector3.New(hInput, vInput) * 0.5 * UnityEngine.Time.deltaTime
+	go.transform.position = destVec
 end
 
 function OnLoadFinish(objs)

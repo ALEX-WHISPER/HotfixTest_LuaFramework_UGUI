@@ -65,6 +65,9 @@ public static class CustomSettings
         _GT(typeof(InjectType)),
         _GT(typeof(Debugger)).SetNameSpace(null),          
 
+        //  custom
+        _GT(typeof(UnitySceneManagement)),
+
 #if USING_DOTWEENING
         _GT(typeof(DG.Tweening.DOTween)),
         _GT(typeof(DG.Tweening.Tween)).SetBaseType(typeof(System.Object)).AddExtendType(typeof(DG.Tweening.TweenExtensions)),

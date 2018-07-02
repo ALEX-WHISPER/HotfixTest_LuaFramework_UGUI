@@ -1,0 +1,21 @@
+error: reference of custom c# script is nil
+solution:
+	1. add '_GT(typeof(type))' in 'CustomSettings.cs'
+	2. Lua->Gen All
+
+error: reference of lua script is nil
+solution: 
+	1. require 'script_name'
+
+error: bad argument #4 to 'Add' (table expected, got none)
+key code: 
+	LuaComponent.Add():
+		LuaComponent _com = go.AddComponent<LuaComponent>();
+        		_com.table = (LuaTable)rets;
+        		_com.CallAwake();
+
+	LuaComponent.CallAwake(): 
+	            	luaFunc.Invoke<LuaTable, GameObject, LuaTable>(table, gameObject);
+solution:
+	replace 'Invoke' function to 'Call', which will be:
+		luaFunc.Call(table, gameObject);

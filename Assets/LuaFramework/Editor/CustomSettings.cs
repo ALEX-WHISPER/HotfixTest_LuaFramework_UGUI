@@ -67,6 +67,7 @@ public static class CustomSettings
 
         //  custom
         _GT(typeof(UnitySceneManagement)),
+        _GT(typeof(LuaComponent)),
 
 #if USING_DOTWEENING
         _GT(typeof(DG.Tweening.DOTween)),

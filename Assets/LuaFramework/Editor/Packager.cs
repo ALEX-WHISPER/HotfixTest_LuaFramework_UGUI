@@ -169,6 +169,7 @@ public class Packager {
 
         //  custom packager
         AddBuildMap("scifi-gun" + AppConst.ExtName, "*.prefab", "Assets/Resources/SciFi Gun");
+        AddBuildMap("uitest" + AppConst.ExtName, "*.prefab", "Assets/Resources/UIPrefabs/View");
     }
 
     /// <summary>

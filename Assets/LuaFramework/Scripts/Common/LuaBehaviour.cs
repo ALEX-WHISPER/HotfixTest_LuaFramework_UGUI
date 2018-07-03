@@ -11,7 +11,7 @@ namespace LuaFramework {
         private Dictionary<string, LuaFunction> buttons = new Dictionary<string, LuaFunction>();
 
         protected void Awake() {
-            Util.CallMethod(name, "Awake", gameObject);
+            Util.CallMethod(name, "Awake");
         }
 
         protected void Start() {

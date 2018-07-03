@@ -33,10 +33,10 @@ namespace LuaFramework {
                 GameObject prefab = objs[0] as GameObject;
                 if (prefab == null) return;
 
-                GameObject go = Instantiate(prefab) as GameObject;
+                GameObject go = Instantiate(prefab, Parent) as GameObject;
                 go.name = assetName;
                 go.layer = LayerMask.NameToLayer("Default");
-                go.transform.SetParent(Parent);
+                //go.transform.SetParent(Parent);
                 go.transform.localScale = Vector3.one;
                 go.transform.localPosition = Vector3.zero;
                 go.AddComponent<LuaBehaviour>();
@@ -70,6 +70,16 @@ namespace LuaFramework {
             var panelObj = Parent.Find(panelName);
             if (panelObj == null) return;
             Destroy(panelObj.gameObject);
+        }
+
+        public GameObject GetPanelObj(string name) {
+            var panelName = name + "Panel";
+            var panelTransform = Parent.Find(panelName);
+            if (panelTransform == null) {
+                return null;
+            } else {
+                return panelTransform.gameObject;
+            }
         }
     }
 }

@@ -76,15 +76,15 @@ public class LuaComponent : MonoBehaviour {
         return null;
     }
 
-    private void CallAwake() {
+    protected void CallAwake() {
         CallLuaFunc(funcName_Awake);
     }
 
-    private void Start() {
+    protected void Start() {
         CallLuaFunc(funcName_Start);
     }
 
-    private void Update() {
+    protected void Update() {
         CallLuaFunc(funcName_Update);
     }
 

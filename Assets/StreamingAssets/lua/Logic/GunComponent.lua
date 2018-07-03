@@ -5,8 +5,9 @@ GunComponent = {
 	moveSpeed = Vector3.New(0.5,1,0)
 }
 
-function GunComponent: Awake()
+function GunComponent: Awake(gameObject)
 	print("GunCmp Awake name = "..self.name );
+	print("GunCmp Awake gameObject.name = "..gameObject.name );
 end
 
 function GunComponent: Start(gameObject)

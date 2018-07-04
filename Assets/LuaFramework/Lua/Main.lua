@@ -1,6 +1,8 @@
 ﻿require 'Logic.GunComponent'
 require 'Logic.UITestPanel'
+
 require 'Network'
+Event = require 'events'
 
 --主入口函数。从这里开始lua逻辑
 function Main()
@@ -14,8 +16,17 @@ function NetworkOperating()
 
 	local networkManager = LuaHelper.GetNetManager();
 
+	--region net config
 	appConst.SocketAddress = '127.0.0.1';
 	appConst.SocketPort = 12121;
+	--endregion
+
+	--region net events register
+	Event.AddListener(Protocol.Connect, Network.OnConnect)
+	Event.AddListener(Protocol.Message, Network.OnMessage)
+	Event.AddListener(Protocol.Disconnect, Network.OnDisconnect)
+	Event.AddListener(Protocol.Exception, Network.OnException)
+	--endregion
 
 	networkManager:SendConnect();
 end
@@ -36,7 +47,6 @@ function ResourceOperating()
 	panelMgr:CreatePanel('UITest', OnLoadUIPrefabsFinish)
 end
 
---加载完成后的回调
 function Update()
 	
 end

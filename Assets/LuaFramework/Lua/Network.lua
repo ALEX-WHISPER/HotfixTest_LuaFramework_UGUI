@@ -16,15 +16,46 @@ Protocol  = {
 
 --  Socket message
 function Network.OnSocket(key, data)
-    if key == 101 then
-        LuaFramework.Util.Log('Connected!');
-    elseif key == 102 then
-        LuaFramework.Util.Log('Exception!');
-    elseif key == 103 then
-        LuaFramework.Util.Log('Disconnected!');
-    elseif key == 104 then
-        LuaFramework.Util.Log('Send msg!');
-    else
-        LuaFramework.Util.Log('Other~~~');
-    end
+    LuaFramework.Util.Log('OnSocket event broadcast: '..key);
+    Event.Brocast(tostring(key), data)
+end
+
+--  callback: 连接成功
+function Network.OnConnect(data)
+    LuaFramework.Util.Log('Network.OnConnect');
+    Send();
+end
+
+--  callback: 收到消息
+function Network.OnMessage(data)
+    LuaFramework.Util.Log('Network.OnMessage');
+
+    local str = data:ReadString();
+    LuaFramework.Util.Log('---Recv msg: '..str..'---');
+end
+
+--  callback: 连接异常
+function Network.OnException()
+    LuaFramework.Util.Log('Network.OnException');
+end
+
+--  callback: 连接断开
+function Network.OnDisconnect()
+    LuaFramework.Util.Log('Network.OnDisconnect')
+end
+
+
+function Send()
+--region 组装数据
+    local buffer = LuaFramework.ByteBuffer.New();
+    buffer:WriteShort(Protocol.Message);
+    buffer:WriteString('Riders on the storm');
+--endregion
+
+--region 发送消息
+    local luaHelper = LuaFramework.LuaHelper;
+    local networkManager = luaHelper.GetNetManager();
+    networkManager:SendMessage(buffer);
+    LuaFramework.Util.Log('数据发送完毕');
+--endregion
 end

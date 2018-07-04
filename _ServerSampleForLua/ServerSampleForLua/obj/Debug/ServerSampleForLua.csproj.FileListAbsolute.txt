@@ -4,3 +4,9 @@ G:\Unity\_JustGood\ServerSampleForLua\ServerSampleForLua\bin\Debug\ServerSampleF
 G:\Unity\_JustGood\ServerSampleForLua\ServerSampleForLua\obj\Debug\ServerSampleForLua.csprojResolveAssemblyReference.cache
 G:\Unity\_JustGood\ServerSampleForLua\ServerSampleForLua\obj\Debug\ServerSampleForLua.exe
 G:\Unity\_JustGood\ServerSampleForLua\ServerSampleForLua\obj\Debug\ServerSampleForLua.pdb
+G:\Unity\_JustGood\HotfixTest_LuaFramework_UGUI\_ServerSampleForLua\ServerSampleForLua\bin\Debug\ServerSampleForLua.exe.config
+G:\Unity\_JustGood\HotfixTest_LuaFramework_UGUI\_ServerSampleForLua\ServerSampleForLua\obj\Debug\ServerSampleForLua.exe
+G:\Unity\_JustGood\HotfixTest_LuaFramework_UGUI\_ServerSampleForLua\ServerSampleForLua\obj\Debug\ServerSampleForLua.pdb
+G:\Unity\_JustGood\HotfixTest_LuaFramework_UGUI\_ServerSampleForLua\ServerSampleForLua\bin\Debug\ServerSampleForLua.exe
+G:\Unity\_JustGood\HotfixTest_LuaFramework_UGUI\_ServerSampleForLua\ServerSampleForLua\bin\Debug\ServerSampleForLua.pdb
+G:\Unity\_JustGood\HotfixTest_LuaFramework_UGUI\_ServerSampleForLua\ServerSampleForLua\obj\Debug\ServerSampleForLua.csprojResolveAssemblyReference.cache

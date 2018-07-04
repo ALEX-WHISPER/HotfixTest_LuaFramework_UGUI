@@ -10,11 +10,7 @@ using System.IO;
 
 namespace ServerSampleForLua {
     class Communicate {
-
-        string str_Read = null;
         bool isConnected = false;
-        NetworkStream netStream = null;    //  网络流
-        TextReader txtReader = null;
         Thread thread_AcceptMsg = null;
 
         public void StartNewComunicateThread(Socket clientSocket) {
@@ -32,22 +28,59 @@ namespace ServerSampleForLua {
             isConnected = true;
             Console.WriteLine("Connected with client: " + client.RemoteEndPoint.ToString());
 
-            netStream = new NetworkStream(client);
-            txtReader = new StreamReader(netStream);
-
             while (isConnected) {
                 try {
-                    str_Read = txtReader.ReadLine();
-                    if (str_Read.Length > 0) {
-                        lock (this) {
-                            string msg = client.RemoteEndPoint + ":" + str_Read;
-                            Console.WriteLine(msg);
-                        }
+                    byte[] readBuffer = new byte[100];
+                    int count = client.Receive(readBuffer);
+                    if (count == 0) {
+                        isConnected = false;
+                        Console.WriteLine("---Disconnected---");
+                        return;
                     }
+
+                    DispByteStream(readBuffer, count);
+                    DecodeProtocol(readBuffer);
+                    Echo(client, readBuffer, count);
                 } catch {
                     thread_AcceptMsg.Abort();
                 }
             }
+            client.Shutdown(SocketShutdown.Both);
+            client.Close();
+        }
+
+        //  显示字节流
+        private void DispByteStream(byte[] buffer, int count) {
+            string showStr = "";
+            for (int i = 0; i < count; i++) {
+                int b = (int)buffer[i];
+                showStr += b.ToString() + " ";
+            }
+
+            Console.WriteLine("ByteStream：" + showStr);
+        }
+
+        //  解析协议
+        private void DecodeProtocol(byte[] buffer) {
+            Int16 messageLen = BitConverter.ToInt16(buffer, 0);
+            Int16 protocol = BitConverter.ToInt16(buffer, 2);
+            if (protocol.Equals(Protocol.ProtocolNum.Exception) || protocol.Equals(Protocol.ProtocolNum.Disconnect)) {
+                isConnected = false;
+                return;
+            }
+
+            Int16 strLen = BitConverter.ToInt16(buffer, 4);
+            string str = System.Text.Encoding.UTF8.GetString(buffer, 6, strLen);
+            Console.WriteLine("Length: " + messageLen);
+            Console.WriteLine("Protocol：" + protocol);
+            Console.WriteLine("Content：" + str);
+        }
+
+        //  echo
+        private void Echo(Socket client, byte[] originBuffer, int count) {
+            byte[] writeBuffer = new byte[count];
+            Array.Copy(originBuffer, writeBuffer, count);
+            client.Send(writeBuffer);
         }
     }
 }

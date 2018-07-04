@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 namespace ServerSampleForLua {
     class Connect {
@@ -27,7 +28,6 @@ namespace ServerSampleForLua {
         //  保存服务器端所有调用AcceptMsg()方法的线程
         Dictionary<string, Thread> Dic_Thread = new Dictionary<string, Thread>();
         #endregion
-
         /// <summary>
         /// 启动
         /// </summary>
@@ -36,20 +36,20 @@ namespace ServerSampleForLua {
             svrSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             svrSocket.Bind(ipEd);
 
-            svrSocket.Listen(10);
+            svrSocket.Listen(0);
             Console.WriteLine("---Start server---");
 
             comObj = new Communicate();
 
             //  start watching thread
-            thread_Watching = new Thread(WatchingConnetction);
+            thread_Watching = new Thread(WatchingConnection);
             thread_Watching.Start();
         }
 
         /// <summary>
         /// 监听连接请求
         /// </summary>
-        private void WatchingConnetction() {
+        private void WatchingConnection() {
             while (true) {
                 clientSocket = svrSocket.Accept();
                 if (Dic_Socket.ContainsValue(clientSocket)) {

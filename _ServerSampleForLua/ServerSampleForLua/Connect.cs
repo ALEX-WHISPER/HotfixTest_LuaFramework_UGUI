@@ -13,12 +13,12 @@ namespace ServerSampleForLua {
         #region global vars
         IPAddress ipAdr = IPAddress.Parse("127.0.0.1");
         int portNum = 12121;
-        IPEndPoint ipEd = null;
+        IPEndPoint ipEdp = null;
 
         Socket svrSocket = null;    //  服务端套接字
         Socket clientSocket = null; //  客户端套接字
 
-        Thread thread_Watching = null;
+        Thread thread_Listenning = null;
 
         Communicate comObj = null;
 
@@ -32,24 +32,24 @@ namespace ServerSampleForLua {
         /// 启动
         /// </summary>
         public void StartServer() {
-            ipEd = new IPEndPoint(ipAdr, portNum);
+            ipEdp = new IPEndPoint(ipAdr, portNum);
             svrSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            svrSocket.Bind(ipEd);
+            svrSocket.Bind(ipEdp);
 
             svrSocket.Listen(0);
             Console.WriteLine("---Start server---");
 
             comObj = new Communicate();
 
-            //  start watching thread
-            thread_Watching = new Thread(WatchingConnection);
-            thread_Watching.Start();
+            //  start listenning thread
+            thread_Listenning = new Thread(ListenningConnection);
+            thread_Listenning.Start();
         }
 
         /// <summary>
         /// 监听连接请求
         /// </summary>
-        private void WatchingConnection() {
+        private void ListenningConnection() {
             while (true) {
                 clientSocket = svrSocket.Accept();
                 if (Dic_Socket.ContainsValue(clientSocket)) {
